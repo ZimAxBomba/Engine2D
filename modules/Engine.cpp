@@ -8,6 +8,8 @@ Engine::Engine(){
     sizeX = 200;
     sizeY = 100;
     fps = 60;
+    mouseInput = true;
+    keyboardInput = true;
     }
 Engine::Engine(bool full,int x,int y,std::string name){
         fullscreen = full;
@@ -20,18 +22,33 @@ Engine::Engine(bool full,int x,int y,std::string name){
 void EngineWrapper::run(){
     sf::RenderWindow &mainWindow = engine.getWindow();
     //sf::Event &event = engine.getEvent();
-    if(engine.isFullscreen())
-        mainWindow.create(sf::VideoMode(engine.getX(),engine.getY()),engine.getTitle(),sf::Style::Fullscreen);
-    else
-        mainWindow.create(sf::VideoMode(engine.getX(),engine.getY()),engine.getTitle());
+    engine.drawWindow();
     while(mainWindow.isOpen()){
-        //handle input
         //handle events
         while(mainWindow.pollEvent(event)){
            HandleEvent(event);
                 }
         //handle render
+        mainWindow.clear();
+        drawShapes();
+        mainWindow.display();
+        sf::sleep(sf::milliseconds(1000/engine.getFps()));
     }
+}
+
+
+
+void Engine::drawWindow(){
+    if(fullscreen)
+        mainWindow.create(sf::VideoMode(sizeX,sizeY),title,sf::Style::Fullscreen);
+    else
+        mainWindow.create(sf::VideoMode(sizeX,sizeY),title);
+}
+
+void EngineWrapper::drawShapes(){
+    sf::RenderWindow &mainWindow = engine.getWindow();
+    for(auto i = renderer.shapes.begin();i!=renderer.shapes.end();i++)
+        mainWindow.draw(**i);
 }
 
 
@@ -41,12 +58,23 @@ void Engine::resize(int x, int y){
     //sizeY = y;
 }
 
+void Engine::resize(){
+    mainWindow.create(sf::VideoMode(sizeX,sizeY),title);
+}
 void Engine::setFps(int f){
     fps = f;
 }
 
 void Engine::setFullscreen(bool full){
     fullscreen = full;
+}
+
+void Engine::setX(int x){
+    sizeX = x;
+}
+
+void Engine::setY(int y){
+    sizeY = y;
 }
 
 sf::RenderWindow& Engine::getWindow(){
@@ -57,6 +85,17 @@ bool Engine::isFullscreen(){
     return fullscreen;
 }
 
+bool Engine::mouse(){
+    return mouseInput;
+}
+
+bool Engine::keyboard(){
+    return keyboardInput;
+}
+
+int Engine::getFps(){
+    return fps;
+}
 
 int Engine::getX(){
     return sizeX;
@@ -76,10 +115,16 @@ void EngineWrapper::HandleEvent(sf::Event event){
             mainWindow.close();
             break;
         case sf::Event::KeyPressed:
+            if(engine.keyboard()){
             switch(event.key.code){
                 case sf::Keyboard::X:
                     engine.resize(800,600);
-                    break;
+            }
+            break;
+            }
+        case sf::Event::MouseButtonPressed:
+            if(engine.mouse()){
+                //
             }
             break;
     }
