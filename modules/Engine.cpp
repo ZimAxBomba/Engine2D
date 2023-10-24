@@ -51,6 +51,12 @@ void EngineWrapper::drawShapes(){
         mainWindow.draw(**i);
 }
 
+void EngineWrapper::drawPoints(){
+    sf::RenderWindow &mainWindow = engine.getWindow();
+    for(auto i = renderer.points.begin();i!=renderer.points.end();i++)
+        mainWindow.draw(*i,1,sf::Points);
+}
+
 
 void Engine::resize(int x, int y){
     mainWindow.create(sf::VideoMode(x,y),title);
