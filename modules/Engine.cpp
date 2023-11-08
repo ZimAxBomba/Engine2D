@@ -5,8 +5,8 @@
 Engine::Engine(){
     fullscreen = false;
     title = "Default";
-    sizeX = 200;
-    sizeY = 100;
+    sizeX = 800;
+    sizeY = 600;
     fps = 60;
     mouseInput = true;
     keyboardInput = true;
@@ -32,7 +32,7 @@ void EngineWrapper::run(){
         mainWindow.clear();
         drawShapes();
         mainWindow.display();
-        sf::sleep(sf::milliseconds(1000/engine.getFps()));
+        //sf::sleep(sf::milliseconds(1000/engine.getFps()));
     }
 }
 
@@ -49,13 +49,21 @@ void EngineWrapper::drawShapes(){
     sf::RenderWindow &mainWindow = engine.getWindow();
     for(auto i = renderer.shapes.begin();i!=renderer.shapes.end();i++)
         mainWindow.draw(**i);
+    //CUSTOM DRAW
+    for(int i=0;i<renderer.customShapes.size();i++){
+        //for(auto j = renderer.customShapes[i].shape.begin();j!=renderer.customShapes[i].shape.end();j++)
+        //literal black magic vodoo stuff
+        for(int j=0;j<renderer.customShapes[i]->shape.size();j++)
+            mainWindow.draw(*renderer.customShapes[i]->shape[j]);
+    }
 }
-
+/*
 void EngineWrapper::drawPoints(){
     sf::RenderWindow &mainWindow = engine.getWindow();
     for(auto i = renderer.points.begin();i!=renderer.points.end();i++)
         mainWindow.draw(*i,1,sf::Points);
 }
+*/
 
 
 void Engine::resize(int x, int y){
