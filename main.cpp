@@ -24,14 +24,21 @@ int main(){
     app.renderer.addCustomElipse(Point2D(20,20),30,20);
 */
 
-    Line2D *line = new Line2D(Point2D(1,2),Point2D(88,600));
+    //Line2D *line = new Line2D(Point2D(1,2),Point2D(88,600));
     //app.renderer.addLine(line);
 
     std::vector<Point2D> v = {Point2D(0,0),Point2D(0,40),Point2D(40,40),Point2D(40,0)};
-    BrokenLine *line2 = new BrokenLine(v,false);
-    app.renderer.addBrokenLine(line2);
+    std::vector<Point2D> v2 = {Point2D(0,0),Point2D(0,40),Point2D(80,60),Point2D(40,100),Point2D(20,0)};
+    //BrokenLine *line2 = new BrokenLine(v2,false);
+    //app.renderer.addBrokenLine(line2);
+    Polygon *poly1 = new Polygon(v);
+    Polygon *poly = new Polygon(v2);
+    app.renderer.addCustomPolygon(poly1);
+    app.renderer.addCustomPolygon(poly);
+
 
     Circle *circ = new Circle(Point2D(100,100),50);
+    circ->fill(circ->origin);
     app.renderer.addCustomCircle(circ);
 
     Elipse *elipse = new Elipse(Point2D(100,200),50,100);

@@ -48,6 +48,7 @@ class EngineWrapper{
         void HandleEvent(sf::Event);
         void drawShapes();
         void drawPoints();
+        void Update(double);
         Engine engine;
         PrimitiveRenderer renderer;
         sf::Event event;

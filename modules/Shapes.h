@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include <iostream>
 
 class Point2D{
     public:
@@ -29,6 +30,13 @@ class CustomShape{
         sf::Color col;
         std::vector<sf::Shape*>shape;
         //std::vector<Point2D*>shape;
+};
+
+class TransformableShape{
+    public:
+        virtual void move()=0;
+        virtual void rotate()=0;
+        virtual void scale()=0;
 };
 
 class Line2D: virtual public CustomShape{
@@ -59,6 +67,7 @@ class Circle: virtual public CustomShape{
     Circle();
     Circle(Point2D,int);
     void draw();
+    void fill(Point2D);
 
     Point2D origin;
     int r;
@@ -69,10 +78,21 @@ class Elipse: virtual public CustomShape{
         Elipse();
         Elipse(Point2D,int,int);
         void draw();
+        //void fill();
 
         Point2D origin;
         int rx;
         int ry;
+};
+
+class Polygon: virtual public CustomShape{
+    public:
+        Polygon();
+        Polygon(std::vector<Point2D>);
+        void draw();
+
+        std::vector<Point2D> points;
+        bool intersecting;
 };
 
 class PrimitiveRenderer{
@@ -86,6 +106,7 @@ class PrimitiveRenderer{
     void addBrokenLine(BrokenLine*);
     void addCustomCircle(Circle*);
     void addCustomElipse(Elipse*);
+    void addCustomPolygon(Polygon*);
     //
     //
     //void addCustomElipse(Point2D,int,int);
@@ -93,9 +114,13 @@ class PrimitiveRenderer{
     //void addLine(Point2D,Point2D);
     //void addBrokenLine(std::vector<Point2D>,bool);
     //
+    void FillShape(CustomShape*,Point2D);
 
     std::vector<sf::Shape*>shapes;
     std::vector<CustomShape*>customShapes;
 };
+
+double EvalDet(Point2D,Point2D,Point2D);
+bool EvalCollision(Line2D,Line2D);
 
 #endif

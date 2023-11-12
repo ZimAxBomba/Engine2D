@@ -1,5 +1,31 @@
 #include "Shapes.h"
 
+double EvalDet(Point2D p1,Point2D p2,Point2D p3){
+    /*
+     * {p1.x,p2.x,p3.x}
+     * {p1.y,p2.y,p3.y}
+     * {1   ,1   ,1   }
+     */
+    double det = 0.0;
+    det = p1.x*((p2.y*1)-(p3.y-1))-p2.x*((p1.y*1)-(p3.y-1))+p3.x*((p1.y*1)-(p2.y-1));
+    return det;
+}
+
+bool EvalCollision(Line2D l1, Line2D l2){
+    double s1 = EvalDet(l1.p1,l2.p1,l2.p2);
+    double s2 = EvalDet(l1.p2,l2.p1,l2.p2);
+    double s3 = EvalDet(l2.p1,l1.p1,l1.p2);
+    double s4 = EvalDet(l2.p2,l1.p1,l1.p2);
+    //std::cout << s1 << "|" << s2<< "|" << s3<< "|" << s4 << std::endl;
+
+    if(s1<0 && s2>0 && s3>0 && s4<0)
+        return true;
+    else if(s1>0 && s2<0 && s3<0 && s4>0)
+        return true;
+    else
+        return false;
+}
+
 void PrimitiveRenderer::addRect(sf::Vector2f vec,sf::Vector2f origin){
     sf::RectangleShape *rect = new sf::RectangleShape(vec);
     rect->setPosition(origin.x,origin.y);
@@ -17,6 +43,8 @@ void PrimitiveRenderer::addCirc(double r,sf::Vector2f origin){
     circ->setPosition(origin.x,origin.y);
     shapes.push_back(circ);
 }
+
+
 
 
 
@@ -46,10 +74,15 @@ void PrimitiveRenderer::addLine(Point2D p1,Point2D p2){
 }
 */
 
+void PrimitiveRenderer::addPoint(Point2D p){
+    //
+}
 
+/*
 void PrimitiveRenderer::addPoint(Point2D point){
     addRect(sf::Vector2f(1,1),sf::Vector2f(point.x,point.y));
 }
+*/
 /* temp comment
 void PrimitiveRenderer::addBrokenLine(std::vector<Point2D> points,bool isOpen){
     if(!isOpen)
@@ -190,6 +223,10 @@ void PrimitiveRenderer::addCustomElipse(Elipse *elipse){
     customShapes.push_back(elipse);
 }
 
+void PrimitiveRenderer::addCustomPolygon(Polygon *poly){
+    customShapes.push_back(poly);
+}
+
 Line2D::Line2D(){
     p1.x=0;
     p1.y=0;
@@ -261,7 +298,7 @@ BrokenLine::BrokenLine(std::vector<Point2D> p,bool open){
 void BrokenLine::draw(){
     if(!isOpen)
         points.push_back(points[0]);
-    for(int i=0;i<=points.size();i++){
+    for(int i=0;i<points.size();i++){
         int j = i+1;
         if(j<points.size()){
             //addLine(Point2D(points[i].x,points[i].y),Point2D(points[j].x,points[j].y));
@@ -297,6 +334,24 @@ void Circle::draw(){
     }
 }
 
+void Circle::fill(Point2D p){
+    bool filled = false;
+    for(int i = 0;i<shape.size();i++){
+        sf::Vector2f v = shape[i]->getPosition();
+        if(v.x == p.x && v.y == p.y){
+            filled = true;
+            break;
+        }
+    }
+    if(!filled){
+        addPixel(Point2D(1,1),p);
+        Circle::fill(Point2D(p.x+1,p.y));
+        Circle::fill(Point2D(p.x-1,p.y));
+        Circle::fill(Point2D(p.x,p.y+1));
+        Circle::fill(Point2D(p.x,p.y-1));
+    }
+}
+
 Elipse::Elipse(Point2D o, int rX, int rY){
     origin = o;
     rx = rX;
@@ -321,3 +376,47 @@ void Elipse::draw(){
         addPixel(Point2D(1,1),Point2D(origin.x-y,origin.y+x));
     }
 }
+
+Polygon::Polygon(std::vector<Point2D> p){
+    intersecting = false;
+    points = p;
+    draw();
+}
+
+Polygon::Polygon(){
+    intersecting = false;
+}
+
+void Polygon::draw(){
+    if(intersecting)
+        return;
+    //Check if it intersects
+    points.push_back(points[0]);
+    int size = points.size();
+    int p1,p2,p3,p4;
+    for(int i=0;i<size;i++){
+        for(int j=0;j<size;j++){
+            if(j-i==1 || j-i==-1||j==i)
+                    continue;
+            p1=i;p2=i+1;
+            p3=j;p4=j+1;
+            if(p2<size && p4<size){
+                intersecting = EvalCollision(Line2D(points[p1],points[p2]),Line2D(points[p3],points[p4]));
+                //std::cout << intersecting << std::endl;
+                if(intersecting)
+                    return;
+            }
+        }
+    }
+    //draw
+    for(int i=0;i<points.size();i++){
+        int j = i+1;
+        if(j<points.size()){
+            Line2D *tmp = new Line2D();
+            tmp->p1 = Point2D(points[i].x,points[i].y);
+            tmp->p2 = Point2D(points[j].x,points[j].y);
+            tmp->draw(shape);
+            }
+    }
+}
+

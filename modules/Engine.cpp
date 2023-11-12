@@ -18,7 +18,7 @@ Engine::Engine(bool full,int x,int y,std::string name){
         sizeY = y;
         fps = 60;
     }
-
+/*
 void EngineWrapper::run(){
     sf::RenderWindow &mainWindow = engine.getWindow();
     //sf::Event &event = engine.getEvent();
@@ -35,7 +35,35 @@ void EngineWrapper::run(){
         //sf::sleep(sf::milliseconds(1000/engine.getFps()));
     }
 }
+*/
 
+void EngineWrapper::run(){
+    sf::Clock dClock;
+    double realDelta = 0.0;
+    double lastUpdate = dClock.getElapsedTime().asSeconds();
+    //double gameTimeFactor = 1.0;
+    sf::RenderWindow &mainWindow = engine.getWindow();
+    //sf::Event &event = engine.getEvent();
+    engine.drawWindow();
+    while(mainWindow.isOpen()){
+        realDelta = dClock.getElapsedTime().asSeconds() - lastUpdate;
+        lastUpdate += realDelta;
+        double gameDelta = realDelta;// * gameTimeFactor;
+        //handle events
+        while(mainWindow.pollEvent(event)){
+           HandleEvent(event);
+                }
+        //update
+        Update(gameDelta);
+        //handle render
+        mainWindow.clear();
+        drawShapes();
+        mainWindow.display();
+        //sf::sleep(sf::milliseconds(1000/engine.getFps()));
+    }
+}
+
+void EngineWrapper::Update(double dt){}
 
 
 void Engine::drawWindow(){
