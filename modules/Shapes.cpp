@@ -74,10 +74,6 @@ void PrimitiveRenderer::addLine(Point2D p1,Point2D p2){
 }
 */
 
-void PrimitiveRenderer::addPoint(Point2D p){
-    //
-}
-
 /*
 void PrimitiveRenderer::addPoint(Point2D point){
     addRect(sf::Vector2f(1,1),sf::Vector2f(point.x,point.y));
@@ -207,6 +203,10 @@ void CustomShape::addPixel(Point2D vec,Point2D origin,std::vector<sf::Shape*>&s)
 
 }
 
+void PrimitiveRenderer::addPoint(Point *p){
+    customShapes.push_back(p);
+}
+
 void PrimitiveRenderer::addLine(Line2D *line){
     customShapes.push_back(line);
 }
@@ -225,6 +225,39 @@ void PrimitiveRenderer::addCustomElipse(Elipse *elipse){
 
 void PrimitiveRenderer::addCustomPolygon(Polygon *poly){
     customShapes.push_back(poly);
+}
+
+Point::Point(Point2D point){
+    p = point;
+    draw();
+}
+
+void Point::draw(){
+    addPixel(Point2D(1,1),p);
+}
+
+void Point::move(Point2D vec){
+    p.x += vec.x;
+    p.y += vec.y;
+    shape.clear();
+    draw();
+}
+
+void Point::rotate(float angle){
+    int nx,ny;
+    nx = (p.x * cos(angle)) - (p.y * sin(angle));
+    std::cout << nx << std::endl;
+    ny = (p.x * sin(angle)) + (p.y * cos(angle));
+    std::cout << ny << std::endl;
+    p.x = nx;
+    p.y = ny;
+
+    shape.clear();
+    draw();
+}
+
+void Point::scale(float scale){
+    //
 }
 
 Line2D::Line2D(){
@@ -287,6 +320,50 @@ void Line2D::draw(std::vector<sf::Shape*> &shape){
         x += xLine*sx;
         y += yLine*sy;
     }
+}
+
+void Line2D::move(Point2D vec){
+    p1.x += vec.x;
+    p1.y += vec.y;
+    p2.x += vec.x;
+    p2.y += vec.y;
+
+    shape.clear();
+    draw();
+}
+
+void Line2D::rotate(float angle){
+    Point2D np1,np2;
+    np1.x = (p1.x * cos(angle)) - (p1.y * sin(angle));
+    std::cout << np1.x << std::endl;
+    np1.y = (p1.x * sin(angle)) + (p1.y * cos(angle));
+    std::cout << np1.y << std::endl;
+
+    np2.x = (p2.x * cos(angle)) - (p2.y * sin(angle));
+    std::cout << np2.x << std::endl;
+    np2.y = (p2.x * sin(angle)) + (p2.y * cos(angle));
+    std::cout << np2.y << std::endl;
+
+    p1 = np1;
+    p2 = np2;
+
+    shape.clear();
+    draw();
+}
+
+void Line2D::scale(float scale){
+    Point2D np1,np2;
+    np1.x = p1.x*scale;
+    np1.y = p1.y*scale;
+
+    np2.x = p2.x*scale;
+    np2.y = p2.y*scale;
+
+    p1 = np1;
+    p2 = np2;
+
+    shape.clear();
+    draw();
 }
 
 BrokenLine::BrokenLine(std::vector<Point2D> p,bool open){
@@ -410,7 +487,7 @@ void Polygon::draw(){
     }
     //draw
     for(int i=0;i<points.size();i++){
-        int j = i+1;
+int j = i+1;
         if(j<points.size()){
             Line2D *tmp = new Line2D();
             tmp->p1 = Point2D(points[i].x,points[i].y);
@@ -420,3 +497,52 @@ void Polygon::draw(){
     }
 }
 
+Player::Player(){
+    max_speed = 300;
+    speed.x=0;speed.y=0;
+    p.setSize(sf::Vector2f(50,50));
+}
+
+Player::Player(Point2D origin){
+    speed.x=0;speed.y=0;
+    max_speed = 300;
+    position = origin;
+    p.setOrigin(position.x,position.y);
+    p.setSize(sf::Vector2f(50,50));
+}
+
+void Player::Update(double dt){
+   float acc = 10;
+   if(speed.x > max_speed)
+       speed.x = max_speed;
+   if(speed.x < max_speed*-1)
+       speed.x = max_speed*-1;
+   if(speed.y > max_speed)
+       speed.y = max_speed;
+   if(speed.y < max_speed*-1)
+       speed.y = max_speed*-1;
+
+   if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+       speed.y -= acc;
+   if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+       speed.y += acc;
+   if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+       speed.x -= acc;
+   if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+       speed.x += acc;
+
+
+   double sx, sy;
+   sx = speed.x*dt;
+   sy = speed.y*dt;
+
+
+   std::cout << sx << " | " << sy << std::endl;
+   std::cout << dt << std::endl;
+
+   p.move(sx,sy);
+
+   speed.x *= 0.95;
+   speed.y *= 0.95;
+
+}

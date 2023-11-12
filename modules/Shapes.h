@@ -13,7 +13,6 @@ class Point2D{
         int getY();
         void setX(int);
         void setY(int);
-        void drawPoint();
         Point2D(int,int);
         Point2D();
     int x;
@@ -32,19 +31,39 @@ class CustomShape{
         //std::vector<Point2D*>shape;
 };
 
-class TransformableShape{
+class UpdateableObject{
     public:
-        virtual void move()=0;
-        virtual void rotate()=0;
-        virtual void scale()=0;
+    virtual void Update(double)=0;
 };
 
-class Line2D: virtual public CustomShape{
+class TransformableShape{
+    public:
+        virtual void move(Point2D)=0;
+        virtual void rotate(float)=0;
+        virtual void scale(float)=0;
+};
+
+class Point: virtual public CustomShape,virtual public TransformableShape{
+    public:
+        Point();
+        Point(Point2D);
+        void draw();
+        void move(Point2D);
+        void rotate(float);
+        void scale(float);
+
+        Point2D p;
+};
+
+class Line2D: virtual public CustomShape,virtual public TransformableShape{
     public:
     Line2D();
     Line2D(Point2D,Point2D);
     void draw();
     void draw(std::vector<sf::Shape*>&);
+    void move(Point2D);
+    void rotate(float);
+    void scale(float);
 
     //std::vector<sf::Shape*>shape;
     //private:
@@ -95,12 +114,25 @@ class Polygon: virtual public CustomShape{
         bool intersecting;
 };
 
+
+class Player:virtual public UpdateableObject{
+    public:
+        Player();
+        Player(Point2D);
+        void Update(double);
+        float max_speed;
+        sf::Vector2f speed;
+        Point2D position;
+        sf::RectangleShape p;
+
+};
+
 class PrimitiveRenderer{
     public:
     void addRect(sf::Vector2f,sf::Vector2f);
     void addCirc(double,sf::Vector2f);
     void addRegPoly(double,int,sf::Vector2f);
-    void addPoint(Point2D);
+    void addPoint(Point*);
     //
     void addLine(Line2D*);
     void addBrokenLine(BrokenLine*);
@@ -116,6 +148,7 @@ class PrimitiveRenderer{
     //
     void FillShape(CustomShape*,Point2D);
 
+    Player player = Player(Point2D(50,50));
     std::vector<sf::Shape*>shapes;
     std::vector<CustomShape*>customShapes;
 };

@@ -1,5 +1,4 @@
 #include "Engine.h"
-//using namespace std;
 
 
 Engine::Engine(){
@@ -10,6 +9,7 @@ Engine::Engine(){
     fps = 60;
     mouseInput = true;
     keyboardInput = true;
+    mainWindow.setFramerateLimit(fps);
     }
 Engine::Engine(bool full,int x,int y,std::string name){
         fullscreen = full;
@@ -37,6 +37,8 @@ void EngineWrapper::run(){
 }
 */
 
+/*
+ * gotta change evens
 void EngineWrapper::run(){
     sf::Clock dClock;
     double realDelta = 0.0;
@@ -53,17 +55,54 @@ void EngineWrapper::run(){
         while(mainWindow.pollEvent(event)){
            HandleEvent(event);
                 }
+        mainWindow.clear();
         //update
         Update(gameDelta);
         //handle render
-        mainWindow.clear();
         drawShapes();
         mainWindow.display();
         //sf::sleep(sf::milliseconds(1000/engine.getFps()));
     }
 }
+*/
 
-void EngineWrapper::Update(double dt){}
+void EngineWrapper::run(){
+    sf::Clock fpsClock;
+    sf::Clock dClock;
+    double realDelta = 0.0;
+    double lastUpdate = dClock.getElapsedTime().asSeconds();
+    //double gameTimeFactor = 1.0;
+    sf::RenderWindow &mainWindow = engine.getWindow();
+    mainWindow.setFramerateLimit(engine.getFps());
+    //sf::Event &event = engine.getEvent();
+    engine.drawWindow();
+    while(mainWindow.isOpen()){
+        realDelta = dClock.getElapsedTime().asSeconds() - lastUpdate;
+        lastUpdate += realDelta;
+        double gameDelta = realDelta;// * gameTimeFactor;
+        //handle events
+        while(mainWindow.pollEvent(event)){
+           //HandleEvent(event);
+           //HandleMovement();
+                }
+        mainWindow.clear();
+        //update
+        Update(gameDelta);
+        //handle render
+        drawShapes();
+        mainWindow.display();
+        std::cout << "\n\n";
+        std::cout << 1.0f / fpsClock.getElapsedTime().asSeconds() << std::endl;
+        fpsClock.restart();
+    }
+}
+
+void EngineWrapper::Update(double dt){
+    sf::RenderWindow &mainWindow = engine.getWindow();
+    renderer.player.Update(dt);
+    mainWindow.draw(renderer.player.p);
+}
+
 
 
 void Engine::drawWindow(){
@@ -75,14 +114,18 @@ void Engine::drawWindow(){
 
 void EngineWrapper::drawShapes(){
     sf::RenderWindow &mainWindow = engine.getWindow();
-    for(auto i = renderer.shapes.begin();i!=renderer.shapes.end();i++)
-        mainWindow.draw(**i);
+    if(renderer.shapes.size()!=0){
+        for(auto i = renderer.shapes.begin();i!=renderer.shapes.end();i++)
+            mainWindow.draw(**i);
+    }
     //CUSTOM DRAW
-    for(int i=0;i<renderer.customShapes.size();i++){
-        //for(auto j = renderer.customShapes[i].shape.begin();j!=renderer.customShapes[i].shape.end();j++)
-        //literal black magic vodoo stuff
-        for(int j=0;j<renderer.customShapes[i]->shape.size();j++)
-            mainWindow.draw(*renderer.customShapes[i]->shape[j]);
+    if(renderer.customShapes.size()!=0){
+        for(int i=0;i<renderer.customShapes.size();i++){
+            //for(auto j = renderer.customShapes[i].shape.begin();j!=renderer.customShapes[i].shape.end();j++)
+            //literal black magic vodoo stuff
+            for(int j=0;j<renderer.customShapes[i]->shape.size();j++)
+                mainWindow.draw(*renderer.customShapes[i]->shape[j]);
+        }
     }
 }
 /*
@@ -149,6 +192,53 @@ int Engine::getY(){
 std::string Engine::getTitle(){
     return title;
 }
+/*
+void EngineWrapper::HandleMovement(){
+    bool w = false;
+    bool s = false;
+    bool a = false;
+    bool d = false;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        w = true;
+    else
+        w = false;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        s = true;
+    else
+        s = false;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        a = true;
+    else
+        a = false;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        d = true;
+    else
+        d = false;
+
+   if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        renderer.player.speed.y-=30;
+
+   if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        renderer.player.speed.y+=30;
+
+   if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        renderer.player.speed.x-=30;
+
+   if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        renderer.player.speed.x+=30;
+
+
+    if(w)
+        renderer.player.speed.y-=30;
+    if(s)
+        renderer.player.speed.y+=30;
+    if(a)
+        renderer.player.speed.x-=30;
+    if(d)
+        renderer.player.speed.x+=30;
+}
+*/
 
 void EngineWrapper::HandleEvent(sf::Event event){
     sf::RenderWindow &mainWindow = engine.getWindow();
@@ -161,6 +251,21 @@ void EngineWrapper::HandleEvent(sf::Event event){
             switch(event.key.code){
                 case sf::Keyboard::X:
                     engine.resize(800,600);
+                    break;
+                case sf::Keyboard::W:
+                    renderer.player.speed.y-=10;
+                    break;
+                case sf::Keyboard::S:
+                    renderer.player.speed.y+=10;
+                    break;
+                case sf::Keyboard::A:
+                    renderer.player.speed.x-=10;
+                    break;
+                case sf::Keyboard::D:
+                    renderer.player.speed.x+=10;
+                    break;
+                default:
+                    break;
             }
             break;
             }
@@ -168,6 +273,8 @@ void EngineWrapper::HandleEvent(sf::Event event){
             if(engine.mouse()){
                 //
             }
+            break;
+        default:
             break;
     }
 }

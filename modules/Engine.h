@@ -46,6 +46,7 @@ class EngineWrapper{
     public:
         void run();
         void HandleEvent(sf::Event);
+        void HandleMovement();
         void drawShapes();
         void drawPoints();
         void Update(double);
