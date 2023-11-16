@@ -101,7 +101,7 @@ void EngineWrapper::Update(double dt){
     sf::RenderWindow &mainWindow = engine.getWindow();
     renderer.player.Update(dt);
     mainWindow.draw(renderer.player.c.sprite);
-    mainWindow.draw(renderer.player.p);
+    //mainWindow.draw(renderer.player.p);
 }
 
 
@@ -114,7 +114,6 @@ void Engine::drawWindow(){
 }
 
 void EngineWrapper::drawShapes(){
-    /*
     sf::RenderWindow &mainWindow = engine.getWindow();
     if(renderer.shapes.size()!=0){
         for(auto i = renderer.shapes.begin();i!=renderer.shapes.end();i++)
@@ -134,7 +133,6 @@ void EngineWrapper::drawShapes(){
         for(int i=0;i<renderer.sprites.size();i++)
             mainWindow.draw(renderer.sprites[i]->sprite);
     }
-    */
 }
 /*
 void EngineWrapper::drawPoints(){

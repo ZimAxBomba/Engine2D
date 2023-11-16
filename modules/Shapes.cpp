@@ -542,10 +542,12 @@ void Player::Update(double dt){
    sx = speed.x*dt;
    sy = speed.y*dt;
 
-   c.animate();
+   c.animate(dt);
 
-   std::cout << sx << " | " << sy << std::endl;
+   std::cout << sx << ":sx |sy: " << sy << std::endl;
+   /*
    std::cout << dt << std::endl;
+   */
 
    c.sprite.move(sx,sy);
    p.move(sx,sy);
