@@ -503,6 +503,7 @@ int j = i+1;
 
 Player::Player(){
     max_speed = 300;
+    acc = 10;
     speed.x=0;speed.y=0;
     p.setSize(sf::Vector2f(50,50));
 }
@@ -510,13 +511,14 @@ Player::Player(){
 Player::Player(Point2D origin){
     speed.x=0;speed.y=0;
     max_speed = 300;
+    acc = 10;
     position = origin;
     p.setOrigin(position.x,position.y);
+    c.sprite.setOrigin(position.x,position.y);
     p.setSize(sf::Vector2f(50,50));
 }
 
 void Player::Update(double dt){
-   float acc = 10;
    if(speed.x > max_speed)
        speed.x = max_speed;
    if(speed.x < max_speed*-1)
@@ -540,10 +542,12 @@ void Player::Update(double dt){
    sx = speed.x*dt;
    sy = speed.y*dt;
 
+   c.animate();
 
    std::cout << sx << " | " << sy << std::endl;
    std::cout << dt << std::endl;
 
+   c.sprite.move(sx,sy);
    p.move(sx,sy);
 
    speed.x *= 0.95;

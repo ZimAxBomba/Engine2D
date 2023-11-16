@@ -8,6 +8,6 @@ Shapes.o:./modules/Shapes.cpp
 BitmapHandler.o:./modules/BitmapHandler.cpp
 	g++ -c ./modules/BitmapHandler.cpp
 final: main.o Engine.o Shapes.o BitmapHandler.o
-	g++ main.o Engine.o Shapes.o BitmapHandler.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system -I ./modules/
+	g++ main.o Engine.o Shapes.o BitmapHandler.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system -I ./modules/ -g
 
 

@@ -121,10 +121,13 @@ class Player:virtual public UpdateableObject{
         Player();
         Player(Point2D);
         void Update(double);
+
+        float acc;
         float max_speed;
         sf::Vector2f speed;
         Point2D position;
         sf::RectangleShape p;
+        CharObject c;
 
 };
 

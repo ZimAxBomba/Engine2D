@@ -59,7 +59,20 @@ int main(){
     app.renderer.addLine(line2);
  */  
 
+    std::vector<sf::Texture> t = {
+            app.renderer.player.c.loadTexture("textures/Knight_Walk_dir1.png"),
+            app.renderer.player.c.loadTexture("textures/Knight_Walk_dir2.png"),
+            app.renderer.player.c.loadTexture("textures/Knight_Walk_dir3.png"),
+            app.renderer.player.c.loadTexture("textures/Knight_Walk_dir4.png"),
+            app.renderer.player.c.loadTexture("textures/Knight_Walk_dir5.png"),
+            app.renderer.player.c.loadTexture("textures/Knight_Walk_dir6.png"),
+            app.renderer.player.c.loadTexture("textures/Knight_Walk_dir7.png"),
+            app.renderer.player.c.loadTexture("textures/Knight_Walk_dir8.png")
+        };
+
+            
     app.renderer.player.p.setPosition(100,100);
+    app.renderer.player.c.setTextures(t,8);
 
     BitmapObject *sprite = new BitmapObject("textures/knight2.png");
     app.renderer.addSprite(sprite);
