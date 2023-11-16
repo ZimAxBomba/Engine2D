@@ -127,6 +127,11 @@ void EngineWrapper::drawShapes(){
                 mainWindow.draw(*renderer.customShapes[i]->shape[j]);
         }
     }
+    //SPRITES
+    if(renderer.sprites.size()!=0){
+        for(int i=0;i<renderer.sprites.size();i++)
+            mainWindow.draw(renderer.sprites[i]->sprite);
+    }
 }
 /*
 void EngineWrapper::drawPoints(){

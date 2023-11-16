@@ -39,10 +39,8 @@ int main(){
     Circle *circ = new Circle(Point2D(100,100),50);
     //circ->fill(circ->origin);
     app.renderer.addCustomCircle(circ);
-    */
     Elipse *elipse = new Elipse(Point2D(100,200),50,100);
     app.renderer.addCustomElipse(elipse);
-    /*
 
 
     Point2D point(100,100);
@@ -62,6 +60,10 @@ int main(){
  */  
 
     app.renderer.player.p.setPosition(100,100);
+
+    BitmapObject *sprite = new BitmapObject("textures/knight2.png");
+    app.renderer.addSprite(sprite);
+
     app.run();
 
     return 0;

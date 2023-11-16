@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
 #include <math.h>
+#include "BitmapHandler.h"
 
 #include <iostream>
 
@@ -139,6 +140,8 @@ class PrimitiveRenderer{
     void addCustomCircle(Circle*);
     void addCustomElipse(Elipse*);
     void addCustomPolygon(Polygon*);
+
+    void addSprite(BitmapObject*);
     //
     //
     //void addCustomElipse(Point2D,int,int);
@@ -149,6 +152,7 @@ class PrimitiveRenderer{
     void FillShape(CustomShape*,Point2D);
 
     Player player = Player(Point2D(50,50));
+    std::vector<BitmapObject*>sprites;
     std::vector<sf::Shape*>shapes;
     std::vector<CustomShape*>customShapes;
 };

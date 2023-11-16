@@ -227,6 +227,10 @@ void PrimitiveRenderer::addCustomPolygon(Polygon *poly){
     customShapes.push_back(poly);
 }
 
+void PrimitiveRenderer::addSprite(BitmapObject *spr){
+    sprites.push_back(spr);
+}
+
 Point::Point(Point2D point){
     p = point;
     draw();
