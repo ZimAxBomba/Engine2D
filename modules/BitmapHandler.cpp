@@ -1,5 +1,10 @@
 #include "BitmapHandler.h"
 
+/**
+ * Ładuje teksture z pliku i ją zwraca.
+ * @param str Nazwa/lokalizacja pliku z bitmapą.
+ * @return Zwraca teksturę wczytaną z pliku.
+ */
 sf::Texture BitmapHandler::loadTexture(std::string str){
     sf::Texture texture;
     if(!texture.loadFromFile(str)){
@@ -10,37 +15,45 @@ sf::Texture BitmapHandler::loadTexture(std::string str){
         return texture;
 }
 
-/*
-void BitmapHandler::adjustTexture(sf::IntRect r){
-    sprite.setTextureRect(r);
-}
-*/
-/*
-BitmapObject::BitmapObject(){
-    //
-}
-*/
-
+/**
+ * Inicjializuje obiekt z teksturą.
+ * @param path Ścieżka do pliku.
+ */
 BitmapObject::BitmapObject(std::string path){
     texture = loadTexture(path);
     sprite.setTexture(texture);
 }
 
+/**
+ * Konsturktor incjializuje domyślne wartości.
+ */
 CharObject::CharObject(){
     dir = 8;
     speed = 0.15;
 }
 
+/**
+ * Inicjializuje CharObject z podaną ilością kierunków d oraz prędkością s.
+ * @param d Ilośc kierunków do animacji.
+ * @param s Prędkość obiektu.
+ */
 CharObject::CharObject(unsigned int d,float s){
     dir = d;
     speed = s;
 }
 
+/**
+ * Funkcja ładuje tekstury dla obiektu.
+ */
 void CharObject::setTextures(std::vector<sf::Texture> texs,unsigned int d){
    textures = texs;
    dir = d;
 }
 
+/**
+ * Funkcja odpowiedzialna za animowanie obiektu.
+ * @param dt Czas między klatkami gry.
+ */
 void CharObject::animate(double dt){
     bool w,a,s,d;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -88,7 +101,7 @@ void CharObject::animate(double dt){
     sprite.setTexture(textures[dir-1]);
 
     frames+=dt;
-    std::cout << frames << std::endl;
+    //std::cout << frames << std::endl;
 
     width = (curFrame%4)*256;
     height = (curFrame%3)*256;
@@ -96,8 +109,8 @@ void CharObject::animate(double dt){
         width = 512;
     sf::IntRect f(width,height,256,256);
 
-    std::cout << curFrame << std::endl;
-    std::cout <<"Width: " << width <<"Height: "<< height << std::endl;
+    //std::cout << curFrame << std::endl;
+    //std::cout <<"Width: " << width <<"Height: "<< height << std::endl;
 
     if(frames < curFrame*speed){
         //sprite.setTextureRect(sf::IntRect(0,0,256,265));

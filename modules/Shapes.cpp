@@ -1,5 +1,8 @@
 #include "Shapes.h"
 
+/**
+ * Oblicza determinant macierzy 3x3.
+ */
 double EvalDet(Point2D p1,Point2D p2,Point2D p3){
     /*
      * {p1.x,p2.x,p3.x}
@@ -11,12 +14,14 @@ double EvalDet(Point2D p1,Point2D p2,Point2D p3){
     return det;
 }
 
+/**
+ * Oblicza czy wsytępuje kolizja między 2 bokami.
+ */
 bool EvalCollision(Line2D l1, Line2D l2){
     double s1 = EvalDet(l1.p1,l2.p1,l2.p2);
     double s2 = EvalDet(l1.p2,l2.p1,l2.p2);
     double s3 = EvalDet(l2.p1,l1.p1,l1.p2);
     double s4 = EvalDet(l2.p2,l1.p1,l1.p2);
-    //std::cout << s1 << "|" << s2<< "|" << s3<< "|" << s4 << std::endl;
 
     if(s1<0 && s2>0 && s3>0 && s4<0)
         return true;
@@ -26,147 +31,93 @@ bool EvalCollision(Line2D l1, Line2D l2){
         return false;
 }
 
+/**
+ * Dodaje kwadrat do wektora rysowania.
+ * @param vec Wielkośc kwadratu.
+ * @param origin Pozycja kwadratu.
+ */
 void PrimitiveRenderer::addRect(sf::Vector2f vec,sf::Vector2f origin){
     sf::RectangleShape *rect = new sf::RectangleShape(vec);
     rect->setPosition(origin.x,origin.y);
     shapes.push_back(rect);
 }
 
+/**
+ * Dodaje koło do wektora rysowania.
+ * @param r Promień koła.
+ * @param origin Pozycja koła.
+ */
 void PrimitiveRenderer::addCirc(double r,sf::Vector2f origin){
     sf::CircleShape *circ = new sf::CircleShape(r);
     circ->setPosition(origin.x,origin.y);
     shapes.push_back(circ);
 }
 
+/**
+ * Dodaje regularny wielokąt do wektora rysowania.
+ * @param r Promień.
+ * @param sides Ilość boków.
+ * @param origin Pozycja wielokątu.
+ */
  void PrimitiveRenderer::addRegPoly(double r, int sides,sf::Vector2f origin){
     sf::CircleShape *circ = new sf::CircleShape(r,sides);
     circ->setPosition(origin.x,origin.y);
     shapes.push_back(circ);
 }
-
-
-
-
-
-
-/* temp comment
-void PrimitiveRenderer::addLine(Point2D p1,Point2D p2){
-    float dx,dy,length,xLine,yLine,x,y;
-    int sx,sy;
-    dx = abs(p2.x-p1.x);
-    dy = abs(p2.y-p1.y);
-    sy = p2.y-p1.y>=0?1:-1;
-    sx = p2.x-p1.x>=0?1:-1;
-    if(dx >= dy)
-        length = dx;
-    else
-        length = dy;
-
-    xLine = dx/length;
-    yLine = dy/length;
-    x = p1.x+0.5*(xLine);
-    y = p1.y+0.5*(yLine);
-    for(int i=0;i<length;i++){
-        addRect(sf::Vector2f(1,1),sf::Vector2f((int)x,(int)y));
-        x += xLine*sx;
-        y += yLine*sy;
-    }
+/**
+ * Dodaje kwadrat do wektora rysowania.
+ * @param vec Wielkośc kwadratu.
+ * @param origin Pozycja kwadratu.
+ * @param name Nazwa obiektu. Unikatowa.
+ */
+void PrimitiveRenderer::addRect(sf::Vector2f vec,sf::Vector2f origin,std::string name){
+    sf::RectangleShape *rect = new sf::RectangleShape(vec);
+    rect->setPosition(origin.x,origin.y);
+    makeUpdateable(name,rect);
+    shapes.push_back(rect);
 }
-*/
 
-/*
-void PrimitiveRenderer::addPoint(Point2D point){
-    addRect(sf::Vector2f(1,1),sf::Vector2f(point.x,point.y));
+/**
+ * Dodaje koło do wektora rysowania.
+ * @param r Promień koła.
+ * @param origin Pozycja koła.
+ * @param name Nazwa obiektu. Unikatowa.
+ */
+void PrimitiveRenderer::addCirc(double r,sf::Vector2f origin,std::string name){
+    sf::CircleShape *circ = new sf::CircleShape(r);
+    circ->setPosition(origin.x,origin.y);
+    makeUpdateable(name,circ);
+    shapes.push_back(circ);
 }
-*/
-/* temp comment
-void PrimitiveRenderer::addBrokenLine(std::vector<Point2D> points,bool isOpen){
-    if(!isOpen)
-        points.push_back(points[0]);
-    for(int i=0;i<=points.size();i++){
-        int j = i+1;
-        if(j<points.size())
-            addLine(Point2D(points[i].x,points[i].y),Point2D(points[j].x,points[j].y));
-    }
+
+
+/**
+ * Dodaje regularny wielokąt do wektora rysowania.
+ * @param r Promień.
+ * @param sides Ilość boków.
+ * @param origin Pozycja wielokątu.
+ * @param name Nazwa wielokątu. Unikatowa.
+ */
+ void PrimitiveRenderer::addRegPoly(double r, int sides,sf::Vector2f origin,std::string name){
+    sf::CircleShape *circ = new sf::CircleShape(r,sides);
+    circ->setPosition(origin.x,origin.y);
+    makeUpdateable(name,circ);
+    shapes.push_back(circ);
 }
-*/
-/*
-void PrimitiveRenderer::addCustomCircle(Point2D origin,int r){
-    float a,step;
-    int x,y;
 
-    step = 1.0/r;
-
-    for(a=0;a<M_PI/2;a+=step){
-       // x = origin.x + r*cos(a) + 0.5;
-       // y = origin.y + r*sin(a) + 0.5;
-        x = r*cos(a) + 0.5;
-        y = r*sin(a) + 0.5;
-        addRect(sf::Vector2f(1,1),sf::Vector2f(origin.x+x,origin.y+y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(origin.x+y,origin.y-x));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(origin.x-x,origin.y-y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(origin.x-y,origin.y+x));
-    }
-}
-*/
-/*
-void PrimitiveRenderer::addCustomElipse(Point2D origin,int rx,int ry){
-    float a,step;
-    int x,y;
-
-    step = 1.0/rx;
-
-    for(a=0;a<M_PI/2;a+=step){
-       // x = origin.x + r*cos(a) + 0.5;
-       // y = origin.y + r*sin(a) + 0.5;
-        x = ry*cos(a) + 0.5;
-        y = rx*sin(a) + 0.5;
-        addRect(sf::Vector2f(1,1),sf::Vector2f(origin.x+y,origin.y+x));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(origin.x+y,origin.y-x));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(origin.x-y,origin.y-x));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(origin.x-y,origin.y+x));
-    }
-}
-*/
-
-/*
-void PrimitiveRenderer::addCustomCircle(Point2D o,int r){
-    int x,y,r2;
-    r2 = r*r;
-    addRect(sf::Vector2f(1,1),sf::Vector2f(o.x,o.y+r));
-    addRect(sf::Vector2f(1,1),sf::Vector2f(o.x,o.y-r));
-    addRect(sf::Vector2f(1,1),sf::Vector2f(o.x+r,o.y));
-    addRect(sf::Vector2f(1,1),sf::Vector2f(o.x-r,o.y));
-
-    x=1;
-    y=(int)(sqrt(r2-1)+0.5);
-    while(x<y){
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x+x,o.y+y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x+x,o.y-y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x-x,o.y+y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x-x,o.y-y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x+y,o.y+x));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x+y,o.y-x));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x-y,o.y+x));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x-y,o.y-x));
-        x+=1;
-        y=(int)(sqrt(r2-x*x)+0.5);
-    }
-    
-    if(x==y){
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x+x,o.y+y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x+x,o.y-y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x-x,o.y+y));
-        addRect(sf::Vector2f(1,1),sf::Vector2f(o.x-x,o.y-y));
-    }
-}
-*/
-
+/**
+ * Domyślny konstuktor tworzący punkt o współrzędnych 0,0.
+ */
 Point2D::Point2D(){
     x=0;
     y=0;
 }
 
+/**
+ * Konsturktor tworzy punkt o współrżednych x,y.
+ * @param x współrzędna x.
+ * @param y współrzędna y.
+ */
 Point2D::Point2D(int px,int py){
     x = px;
     y = py;
@@ -188,58 +139,127 @@ void Point2D::setY(int py){
     y = py;
 }
 
+/**
+ * Rysuje jeden pixel w miejsce podanych współrzędnych.
+ */
 void CustomShape::addPixel(Point2D vec,Point2D origin){
     sf::RectangleShape *rect = new sf::RectangleShape(sf::Vector2f(vec.x,vec.y));
+    rect->setFillColor(col);
+    rect->setOutlineColor(col);
     rect->setPosition(origin.x,origin.y);
     shape.push_back(rect);
 
 }
 
-
+/**
+ * Rysuje jeden pixel w miejsce podanych współrzędnych do podanego wektora.
+ */
 void CustomShape::addPixel(Point2D vec,Point2D origin,std::vector<sf::Shape*>&s){
     sf::RectangleShape *rect = new sf::RectangleShape(sf::Vector2f(vec.x,vec.y));
     rect->setPosition(origin.x,origin.y);
+    rect->setFillColor(col);
+    rect->setOutlineColor(col);
     s.push_back(rect);
 
 }
 
+/**
+ * Dodaje punkt to wektora rysowania.
+ * @param p Punkt do dodania.
+ */
 void PrimitiveRenderer::addPoint(Point *p){
     customShapes.push_back(p);
 }
 
+/**
+ * Dodaje linię do wektora rysowania.
+ * @param line Linia do dodania.
+ */
 void PrimitiveRenderer::addLine(Line2D *line){
     customShapes.push_back(line);
 }
-
+/**
+ * Dodaje łamaną do wektora rysowania.
+ * @param line Łamana do dodania.
+ */
 void PrimitiveRenderer::addBrokenLine(BrokenLine *line){
     customShapes.push_back(line);
 }
-
+/**
+ * Dodaje koło do wektora rysowania.
+ * @param circle koło do dodania.
+ */
 void PrimitiveRenderer::addCustomCircle(Circle *circle){
     customShapes.push_back(circle);
 }
-
+/**
+ * Dodaje elipse do wektora rysowania.
+ * @param elipse Elipsa do dodania.
+ */
 void PrimitiveRenderer::addCustomElipse(Elipse *elipse){
     customShapes.push_back(elipse);
 }
-
+/**
+ * Dodaje wielokąt do wektora rysowania.
+ * @param poly Wielokąt do dodania.
+ */
 void PrimitiveRenderer::addCustomPolygon(Polygon *poly){
     customShapes.push_back(poly);
 }
-
+/**
+ * Dodaje obiekt sprite do wektora rysowania.
+ * @param spr Sprite do dodania.
+ */
 void PrimitiveRenderer::addSprite(BitmapObject *spr){
     sprites.push_back(spr);
 }
+/**
+ * Umożliwia aktualizowanie podanego obiektu.
+ * @param name Nazwa obiektu.
+ * @param shape Kształt do aktualizowania.
+ */
+void PrimitiveRenderer::makeUpdateable(std::string name,TransformableShape *shape){
+    updateCustomMap.insert(std::pair<std::string,TransformableShape*>(name,shape));
+}
 
+/**
+ * Umożliwia aktualizowanie podanego obiektu.
+ * @param name Nazwa obiektu.
+ * @param shape Kształt do aktualizowania.
+ */
+void PrimitiveRenderer::makeUpdateable(std::string name,sf::Shape *shape){
+    updateMap.insert(std::pair<std::string,sf::Shape*>(name,shape));
+}
+
+/**
+ * Konstruktor inicjializujący punkt o podanych koordynatach.
+ * @param point Koordynaty stworzonego punktu.
+ */
 Point::Point(Point2D point){
     p = point;
     draw();
 }
 
+/**
+ * Konstruktor inicjializujący punkt o podanych koordynatach i kolorze.
+ * @param point Koordynaty stworzonego punktu.
+ * @param color Kolor punktu.
+ */
+Point::Point(Point2D point,sf::Color color){
+    p = point;
+    col = color;
+    draw();
+}
+/**
+ * Funkcja rysująca punkt.
+ */
 void Point::draw(){
     addPixel(Point2D(1,1),p);
 }
-
+/**
+ * Funkcja przenosi punkt o wektor.
+ * @param vec Wektor przesunięcia.
+ */
 void Point::move(Point2D vec){
     p.x += vec.x;
     p.y += vec.y;
@@ -247,6 +267,10 @@ void Point::move(Point2D vec){
     draw();
 }
 
+/**
+ * Funckja obracająca punkt względem punktu 0,0.
+ * @param angle Kąt przesunięcia.
+ */
 void Point::rotate(float angle){
     int nx,ny;
     nx = (p.x * cos(angle)) - (p.y * sin(angle));
@@ -260,10 +284,17 @@ void Point::rotate(float angle){
     draw();
 }
 
+/**
+ * Funkcja skalująca punkt.
+ * @param scale Skala skalowania.
+ */
 void Point::scale(float scale){
-    //
+    shape.back()->setScale(scale,scale);
 }
 
+/**
+ * Domyślny konstruktor inicjializujący linię.
+ */
 Line2D::Line2D(){
     p1.x=0;
     p1.y=0;
@@ -272,13 +303,33 @@ Line2D::Line2D(){
     p2.y=0;
 }
 
+/**
+ * Domyślny konstruktor inicjializujący linię.
+ * @param a Początkowy punkt lini.
+ * @param b Ostatni punkt lini.
+ */
 Line2D::Line2D(Point2D a,Point2D b){
     p1 = a;
     p2 = b;
     draw();
 }
 
+/**
+ * Domyślny konstruktor inicjializujący linię.
+ * @param a Początkowy punkt lini.
+ * @param b Ostatni punkt lini.
+ * @param color Kolor lini.
+ */
+Line2D::Line2D(Point2D a,Point2D b,sf::Color color){
+    p1 = a;
+    p2 = b;
+    col = color;
+    draw();
+}
 
+/**
+ * Funkcja rysująca linię.
+ */
 void Line2D::draw(){
     float dx,dy,length,xLine,yLine,x,y;
     int sx,sy;
@@ -302,7 +353,10 @@ void Line2D::draw(){
     }
 }
 
-
+/**
+ * Funkcja rysująca linię do podanego wektora.
+ * @param shape Wektor, do którego rysowana jest linia.
+ */
 void Line2D::draw(std::vector<sf::Shape*> &shape){
     float dx,dy,length,xLine,yLine,x,y;
     int sx,sy;
@@ -325,7 +379,10 @@ void Line2D::draw(std::vector<sf::Shape*> &shape){
         y += yLine*sy;
     }
 }
-
+/**
+ * Funkcja przesuwa linię o podany wektor.
+ * @param vec Wektor przesunięcia.
+ */
 void Line2D::move(Point2D vec){
     p1.x += vec.x;
     p1.y += vec.y;
@@ -336,6 +393,11 @@ void Line2D::move(Point2D vec){
     draw();
 }
 
+/**
+ * Funkcja obraca linię.
+ * @param angle Kąt obrócenia.
+ * TODO
+ */
 void Line2D::rotate(float angle){
     Point2D np1,np2;
     np1.x = (p1.x * cos(angle)) - (p1.y * sin(angle));
@@ -355,6 +417,10 @@ void Line2D::rotate(float angle){
     draw();
 }
 
+/**
+ * Funkcja skaluje linię.
+ * @param scale Skala Skalowania.
+ */
 void Line2D::scale(float scale){
     Point2D np1,np2;
     np1.x = p1.x*scale;
@@ -370,12 +436,29 @@ void Line2D::scale(float scale){
     draw();
 }
 
+/**
+ * Konstruktor tworzący łamaną z podanego wektora punktów.
+ * @param p Wektor punktów łamanej.
+ * @param open Określa czy łamana jest zamknięta czy otwarta. true - otwarta, false - zamknięta.
+ */
 BrokenLine::BrokenLine(std::vector<Point2D> p,bool open){
     points = p;
     isOpen = open;
     draw();
 }
 
+/**
+ * Konstruktor tworzący łamaną z podanego wektora punktów.
+ * @param p Wektor punktów łamanej.
+ * @param open Określa czy łamana jest zamknięta czy otwarta. true - otwarta, false - zamknięta.
+ * @param color Kolor łamanej.
+ */
+BrokenLine::BrokenLine(std::vector<Point2D> p,bool open,sf::Color color){
+    points = p;
+    isOpen = open;
+    col = color;
+    draw();
+}
 void BrokenLine::draw(){
     if(!isOpen)
         points.push_back(points[0]);
@@ -384,6 +467,7 @@ void BrokenLine::draw(){
         if(j<points.size()){
             //addLine(Point2D(points[i].x,points[i].y),Point2D(points[j].x,points[j].y));
             Line2D *tmp = new Line2D();
+            tmp->col = col;
             tmp->p1 = Point2D(points[i].x,points[i].y);
             tmp->p2 = Point2D(points[j].x,points[j].y);
             tmp->draw(shape);
@@ -391,12 +475,33 @@ void BrokenLine::draw(){
     }
 }
 
+/**
+ * Konsturktor inicjalizuje koło o środku w punkcie p, oraz promieniu rad.
+ * @param p Środek koła.
+ * @param rad Promień koła.
+ */
 Circle::Circle(Point2D p, int rad){
     origin = p;
     r = rad;
     draw();
 }
 
+/**
+ * Konsturktor inicjalizuje koło o środku w punkcie p, oraz promieniu rad.
+ * @param p Środek koła.
+ * @param rad Promień koła.
+ * @param color Kolor koła.
+ */
+Circle::Circle(Point2D p, int rad,sf::Color color){
+    origin = p;
+    r = rad;
+    col = color;
+    draw();
+}
+
+/**
+ * Rysuje koło.
+ */
 void Circle::draw(){
     float a,step;
     int x,y;
@@ -415,6 +520,9 @@ void Circle::draw(){
     }
 }
 
+/**
+ * Wypełnia koło.
+ */
 void Circle::fill(Point2D p){
     bool filled = false;
     for(int i = 0;i<shape.size();i++){
@@ -433,6 +541,12 @@ void Circle::fill(Point2D p){
     }
 }
 
+/**
+ * Konstuktor inicjializujący elipsę w punkcie o, o promieniach rX i rY.
+ * @param o Środek elipsy
+ * @param rX Promień elipsy.
+ * @param rY Drugi promeiń elipsy.
+ */
 Elipse::Elipse(Point2D o, int rX, int rY){
     origin = o;
     rx = rX;
@@ -440,6 +554,24 @@ Elipse::Elipse(Point2D o, int rX, int rY){
     draw();
 }
 
+/**
+ * Konstuktor inicjializujący elipsę w punkcie o, o promieniach rX i rY.
+ * @param o Środek elipsy
+ * @param rX Promień elipsy.
+ * @param rY Drugi promeiń elipsy.
+ * @param color Kolor elipsy.
+ */
+Elipse::Elipse(Point2D o, int rX, int rY,sf::Color color){
+    origin = o;
+    rx = rX;
+    ry = rY;
+    col = color;
+    draw();
+}
+
+/**
+ * Funkcja rysująca elipsę.
+ */
 void Elipse::draw(){
     float a,step;
     int x,y;
@@ -458,12 +590,30 @@ void Elipse::draw(){
     }
 }
 
+/**
+ * Konstruktor inicjializujący wielokąt z podanych punktów.
+ * @param p Wierzchołki wielokątu.
+ */
 Polygon::Polygon(std::vector<Point2D> p){
     intersecting = false;
     points = p;
     draw();
 }
 
+/**
+ * Konstruktor inicjializujący wielokąt z podanych punktów.
+ * @param p Wierzchołki wielokątu.
+ * @param color Kolor wielokątu.
+ */
+Polygon::Polygon(std::vector<Point2D> p,sf::Color color){
+    intersecting = false;
+    points = p;
+    col = color;
+    draw();
+}
+ /**
+  * Konstruktor inicjializująca pusty wielokąt.
+  */
 Polygon::Polygon(){
     intersecting = false;
 }
@@ -494,13 +644,16 @@ void Polygon::draw(){
 int j = i+1;
         if(j<points.size()){
             Line2D *tmp = new Line2D();
+            tmp->col = col;
             tmp->p1 = Point2D(points[i].x,points[i].y);
             tmp->p2 = Point2D(points[j].x,points[j].y);
             tmp->draw(shape);
             }
     }
 }
-
+/**
+ * Inicjializuje gracza z domyślnymi ustawieniami.
+ */
 Player::Player(){
     max_speed = 300;
     acc = 10;
@@ -508,6 +661,10 @@ Player::Player(){
     p.setSize(sf::Vector2f(50,50));
 }
 
+/**
+ * Inicjializuje gracza w podanej pozycji.
+ * @param origin Pozycja startowa gracza.
+ */
 Player::Player(Point2D origin){
     speed.x=0;speed.y=0;
     max_speed = 300;
@@ -518,6 +675,9 @@ Player::Player(Point2D origin){
     p.setSize(sf::Vector2f(50,50));
 }
 
+/**
+ * Funkcja akutalizująca gracza. Zajmuje się również ruchem postaci.
+ */
 void Player::Update(double dt){
    if(speed.x > max_speed)
        speed.x = max_speed;
@@ -544,10 +704,7 @@ void Player::Update(double dt){
 
    c.animate(dt);
 
-   std::cout << sx << ":sx |sy: " << sy << std::endl;
-   /*
-   std::cout << dt << std::endl;
-   */
+   //std::cout << sx << ":sx |sy: " << sy << std::endl;
 
    c.sprite.move(sx,sy);
    p.move(sx,sy);

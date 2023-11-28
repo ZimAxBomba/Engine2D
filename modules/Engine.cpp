@@ -1,6 +1,9 @@
 #include "Engine.h"
 
 
+/**
+ * Konstruktor inicjializujący okno domyślnymi ustawieniami.
+ */
 Engine::Engine(){
     fullscreen = false;
     title = "Default";
@@ -11,61 +14,25 @@ Engine::Engine(){
     keyboardInput = true;
     mainWindow.setFramerateLimit(fps);
     }
+/**
+ * Konstruktor inicjalizuje okno z podanymi wartościami.
+ * @param full Otwiera okno w pełnym ekranie jeśtli wartośc wynosi true.
+ * @param x Szerokość okna.
+ * @param y Wysokość okna.
+ * @param name Wyświetlana nazwa okna.
+ */
 Engine::Engine(bool full,int x,int y,std::string name){
         fullscreen = full;
         title = name;
         sizeX = x;
         sizeY = y;
         fps = 60;
+        mouseInput = true;
+        keyboardInput = true;
     }
-/*
-void EngineWrapper::run(){
-    sf::RenderWindow &mainWindow = engine.getWindow();
-    //sf::Event &event = engine.getEvent();
-    engine.drawWindow();
-    while(mainWindow.isOpen()){
-        //handle events
-        while(mainWindow.pollEvent(event)){
-           HandleEvent(event);
-                }
-        //handle render
-        mainWindow.clear();
-        drawShapes();
-        mainWindow.display();
-        //sf::sleep(sf::milliseconds(1000/engine.getFps()));
-    }
-}
-*/
-
-/*
- * gotta change evens
-void EngineWrapper::run(){
-    sf::Clock dClock;
-    double realDelta = 0.0;
-    double lastUpdate = dClock.getElapsedTime().asSeconds();
-    //double gameTimeFactor = 1.0;
-    sf::RenderWindow &mainWindow = engine.getWindow();
-    //sf::Event &event = engine.getEvent();
-    engine.drawWindow();
-    while(mainWindow.isOpen()){
-        realDelta = dClock.getElapsedTime().asSeconds() - lastUpdate;
-        lastUpdate += realDelta;
-        double gameDelta = realDelta;// * gameTimeFactor;
-        //handle events
-        while(mainWindow.pollEvent(event)){
-           HandleEvent(event);
-                }
-        mainWindow.clear();
-        //update
-        Update(gameDelta);
-        //handle render
-        drawShapes();
-        mainWindow.display();
-        //sf::sleep(sf::milliseconds(1000/engine.getFps()));
-    }
-}
-*/
-
+/**
+ * Główna funckja uruchamiająca pętle gry.
+ */
 void EngineWrapper::run(){
     sf::Clock fpsClock;
     sf::Clock dClock;
@@ -82,7 +49,7 @@ void EngineWrapper::run(){
         double gameDelta = realDelta;// * gameTimeFactor;
         //handle events
         while(mainWindow.pollEvent(event)){
-           //HandleEvent(event);
+           HandleEvent(event);
            //HandleMovement();
                 }
         mainWindow.clear();
@@ -91,8 +58,8 @@ void EngineWrapper::run(){
         //handle render
         drawShapes();
         mainWindow.display();
-        std::cout << "\n\n";
-        std::cout << 1.0f / fpsClock.getElapsedTime().asSeconds() << std::endl;
+        //std::cout << "\n\n";
+        //std::cout << 1.0f / fpsClock.getElapsedTime().asSeconds() << std::endl;
         fpsClock.restart();
     }
 }
@@ -101,10 +68,9 @@ void EngineWrapper::Update(double dt){
     sf::RenderWindow &mainWindow = engine.getWindow();
     renderer.player.Update(dt);
     mainWindow.draw(renderer.player.c.sprite);
+    renderer.updateMap["kwadrat"]->rotate(10*dt);
     //mainWindow.draw(renderer.player.p);
 }
-
-
 
 void Engine::drawWindow(){
     if(fullscreen)
@@ -123,7 +89,6 @@ void EngineWrapper::drawShapes(){
     if(renderer.customShapes.size()!=0){
         for(int i=0;i<renderer.customShapes.size();i++){
             //for(auto j = renderer.customShapes[i].shape.begin();j!=renderer.customShapes[i].shape.end();j++)
-            //literal black magic vodoo stuff
             for(int j=0;j<renderer.customShapes[i]->shape.size();j++)
                 mainWindow.draw(*renderer.customShapes[i]->shape[j]);
         }
@@ -134,14 +99,6 @@ void EngineWrapper::drawShapes(){
             mainWindow.draw(renderer.sprites[i]->sprite);
     }
 }
-/*
-void EngineWrapper::drawPoints(){
-    sf::RenderWindow &mainWindow = engine.getWindow();
-    for(auto i = renderer.points.begin();i!=renderer.points.end();i++)
-        mainWindow.draw(*i,1,sf::Points);
-}
-*/
-
 
 void Engine::resize(int x, int y){
     mainWindow.create(sf::VideoMode(x,y),title);
@@ -198,77 +155,28 @@ int Engine::getY(){
 std::string Engine::getTitle(){
     return title;
 }
-/*
-void EngineWrapper::HandleMovement(){
-    bool w = false;
-    bool s = false;
-    bool a = false;
-    bool d = false;
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        w = true;
-    else
-        w = false;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-        s = true;
-    else
-        s = false;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        a = true;
-    else
-        a = false;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        d = true;
-    else
-        d = false;
-
-   if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        renderer.player.speed.y-=30;
-
-   if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-        renderer.player.speed.y+=30;
-
-   if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        renderer.player.speed.x-=30;
-
-   if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        renderer.player.speed.x+=30;
-
-
-    if(w)
-        renderer.player.speed.y-=30;
-    if(s)
-        renderer.player.speed.y+=30;
-    if(a)
-        renderer.player.speed.x-=30;
-    if(d)
-        renderer.player.speed.x+=30;
-}
-*/
-
+/**
+ * Funkcja przetwarza zdarzenia.
+ */
 void EngineWrapper::HandleEvent(sf::Event event){
     sf::RenderWindow &mainWindow = engine.getWindow();
     switch(event.type){
         case sf::Event::Closed:
             mainWindow.close();
             break;
+            /*
+        case sf::Event::Resized:
+            int x = event.size.width;
+            int y = event.size.height;
+            engine.resize(x,y);
+            break;
+            */
         case sf::Event::KeyPressed:
             if(engine.keyboard()){
             switch(event.key.code){
                 case sf::Keyboard::X:
                     engine.resize(800,600);
-                    break;
-                case sf::Keyboard::W:
-                    renderer.player.speed.y-=10;
-                    break;
-                case sf::Keyboard::S:
-                    renderer.player.speed.y+=10;
-                    break;
-                case sf::Keyboard::A:
-                    renderer.player.speed.x-=10;
-                    break;
-                case sf::Keyboard::D:
-                    renderer.player.speed.x+=10;
                     break;
                 default:
                     break;
@@ -276,32 +184,14 @@ void EngineWrapper::HandleEvent(sf::Event event){
             break;
             }
         case sf::Event::MouseButtonPressed:
-            if(engine.mouse()){
-                //
+            if(event.mouseButton.button == sf::Mouse::Left){
+                renderer.addCirc(20,sf::Vector2f(event.mouseButton.x,event.mouseButton.y));
+            }
+            if(event.mouseButton.button == sf::Mouse::Right){
+                renderer.shapes.back()->move(10,10);
             }
             break;
         default:
             break;
     }
 }
-
-/*
-void EngineWrapper::run(){
-    sf::RenderWindow &mainWindow = engine.getWindow();
-    EventHandler &eventHandler = engine.getHandler();
-   // sf::RenderWindow mainWindow;
-    if(engine.isFullscreen())
-        mainWindow.create(sf::VideoMode(engine.getX(),engine.getY()),engine.getTitle(),sf::Style::Fullscreen);
-    else
-        mainWindow.create(sf::VideoMode(engine.getX(),engine.getY()),engine.getTitle());
-    while(mainWindow.isOpen()){
-        //handle input
-        //handle events
-        while(mainWindow.pollEvent(eventHandler.getEvent())){
-                //eventHandler.HandleEvent(&engine);
-                }
-        //handle render
-    }
-}
-*/
-
