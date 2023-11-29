@@ -291,8 +291,8 @@ void Point::rotate(float angle){
  */
 void Point::rotate(float angle,Point2D point){
     int nx,ny;
-    nx = point.x + (p.x-point.x)*cos(angle)-(p.y-point.y)*sin(angle);
-    ny = point.y + (p.x-point.x)*sin(angle)+(p.y-point.y)*cos(angle);
+    nx = cos(angle)*(p.x-point.x)-sin(angle)*(p.y-point.y)+point.x;
+    ny = sin(angle)*(p.x-point.x)+cos(angle)*(p.y-point.y)+point.y;
     p.x = nx;
     p.y = ny;
 
@@ -410,9 +410,8 @@ void Line2D::move(Point2D vec){
 }
 
 /**
- * Funkcja obraca linię.
+ * Funkcja obraca linię względem punktu 0,0.
  * @param angle Kąt obrócenia.
- * TODO
  */
 void Line2D::rotate(float angle){
     Point2D np1,np2;
@@ -432,7 +431,26 @@ void Line2D::rotate(float angle){
     shape.clear();
     draw();
 }
+/**
+ * Funkcja obraca linię.
+ * @param angle Kąt obrócenia.
+ * @param point Punkt obrócenia.
+ */
+void Line2D::rotate(float angle,Point2D point){
+    Point2D np1,np2;
+    np1.x = cos(angle)*(p1.x-point.x)-sin(angle)*(p1.y-point.y)+point.x;
+    np1.y = sin(angle)*(p1.x-point.x)+cos(angle)*(p1.y-point.y)+point.y;
 
+    np2.x = cos(angle)*(p2.x-point.x)-sin(angle)*(p2.y-point.y)+point.x;
+    np2.y = sin(angle)*(p2.x-point.x)+cos(angle)*(p2.y-point.y)+point.y;
+        
+    p1 = np1;
+    p2 = np2;
+
+    shape.clear();
+    draw();
+}
+/*
 void Line2D::rotate(float angle,Point2D point){
     Point2D np1,np2;
     np1.x = point.x + (p1.x-point.x)*cos(angle)-(p1.y-point.y)*sin(angle);
@@ -447,6 +465,7 @@ void Line2D::rotate(float angle,Point2D point){
     shape.clear();
     draw();
 }
+*/
 
 /**
  * Funkcja skaluje linię.

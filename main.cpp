@@ -57,6 +57,10 @@ int main(){
     app.renderer.shapes.back()->setOrigin(50,50);
     app.renderer.shapes.back()->setFillColor(c);
     app.renderer.shapes.back()->setOutlineColor(c);
+
+    Line2D *l = new Line2D(Point2D(300,300),Point2D(300,500));
+    app.renderer.makeUpdateable("linia",l);
+    app.renderer.addLine(l);
     
     std::vector<sf::Texture> t = {
             app.renderer.player.c.loadTexture("textures/Knight_Walk_dir1.png"),
