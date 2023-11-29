@@ -172,8 +172,8 @@ void EngineWrapper::HandleEvent(sf::Event event){
             engine.resize(x,y);
             break;
             */
+        if(engine.keyboard()){
         case sf::Event::KeyPressed:
-            if(engine.keyboard()){
             switch(event.key.code){
                 case sf::Keyboard::X:
                     engine.resize(800,600);
@@ -183,6 +183,7 @@ void EngineWrapper::HandleEvent(sf::Event event){
             }
             break;
             }
+        if(engine.mouse()){
         case sf::Event::MouseButtonPressed:
             if(event.mouseButton.button == sf::Mouse::Left){
                 renderer.addCirc(20,sf::Vector2f(event.mouseButton.x,event.mouseButton.y));
@@ -193,5 +194,6 @@ void EngineWrapper::HandleEvent(sf::Event event){
             break;
         default:
             break;
+        }
     }
 }

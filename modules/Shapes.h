@@ -62,6 +62,7 @@ class TransformableShape{
          * @param float Kąt w radianach, o który przesunąć kształt.
          */
         virtual void rotate(float)=0;
+        virtual void rotate(float,Point2D)=0;
         /**
          * Czysto wirtualna funkcja skalująca obiekt.
          * @param float Skala, o którą przeskalować obiekt.
@@ -80,6 +81,7 @@ class Point: virtual public CustomShape,virtual public TransformableShape{
         void draw();
         void move(Point2D);
         void rotate(float);
+        void rotate(float,Point2D);
         void scale(float);
 
         Point2D p; /**< Koordynaty punktu. */
@@ -98,6 +100,7 @@ class Line2D: virtual public CustomShape,virtual public TransformableShape{
     void draw(std::vector<sf::Shape*>&);
     void move(Point2D);
     void rotate(float);
+    void rotate(float,Point2D);
     void scale(float);
 
     Point2D p1; /**< Pierwszy punkt lini. */

@@ -285,6 +285,22 @@ void Point::rotate(float angle){
 }
 
 /**
+ * Funckja obracająca punkt względem punktu.
+ * @param angle Kąt przesunięcia.
+ * @param point Punkt względem którego wykonane jest obracanie.
+ */
+void Point::rotate(float angle,Point2D point){
+    int nx,ny;
+    nx = point.x + (p.x-point.x)*cos(angle)-(p.y-point.y)*sin(angle);
+    ny = point.y + (p.x-point.x)*sin(angle)+(p.y-point.y)*cos(angle);
+    p.x = nx;
+    p.y = ny;
+
+    shape.clear();
+    draw();
+}
+
+/**
  * Funkcja skalująca punkt.
  * @param scale Skala skalowania.
  */
@@ -409,6 +425,21 @@ void Line2D::rotate(float angle){
     std::cout << np2.x << std::endl;
     np2.y = (p2.x * sin(angle)) + (p2.y * cos(angle));
     std::cout << np2.y << std::endl;
+
+    p1 = np1;
+    p2 = np2;
+
+    shape.clear();
+    draw();
+}
+
+void Line2D::rotate(float angle,Point2D point){
+    Point2D np1,np2;
+    np1.x = point.x + (p1.x-point.x)*cos(angle)-(p1.y-point.y)*sin(angle);
+    np1.y = point.y + (p1.x-point.x)*sin(angle)-(p1.y-point.y)*cos(angle);
+
+    np2.x = point.x + (p2.x-point.x)*cos(angle)-(p2.y-point.y)*sin(angle);
+    np2.y = point.y + (p2.x-point.x)*sin(angle)-(p2.y-point.y)*cos(angle);
 
     p1 = np1;
     p2 = np2;
