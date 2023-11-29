@@ -111,12 +111,16 @@ class Line2D: virtual public CustomShape,virtual public TransformableShape{
 /**
  * Klasa rysująca łamaną otwartą lub zamkniętą.
  */
-class BrokenLine: virtual public CustomShape{
+class BrokenLine: virtual public CustomShape,virtual public TransformableShape{
     public:
         BrokenLine();
         BrokenLine(std::vector<Point2D>,bool);
         BrokenLine(std::vector<Point2D>,bool,sf::Color);
         void draw();
+        void move(Point2D);
+        void rotate(float);
+        void rotate(float,Point2D);
+        void scale(float);
 
         std::vector<Point2D> points; /**< Wektor punktów łamanej.*/
         bool isOpen; /**< Określa czy łamana jest otwarta.*/
@@ -146,7 +150,7 @@ class Elipse: virtual public CustomShape{
         Elipse(Point2D,int,int);
         Elipse(Point2D,int,int,sf::Color);
         void draw();
-        //void fill();
+        void fill(Point2D);
 
         Point2D origin;
         int rx;

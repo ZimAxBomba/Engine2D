@@ -450,22 +450,6 @@ void Line2D::rotate(float angle,Point2D point){
     shape.clear();
     draw();
 }
-/*
-void Line2D::rotate(float angle,Point2D point){
-    Point2D np1,np2;
-    np1.x = point.x + (p1.x-point.x)*cos(angle)-(p1.y-point.y)*sin(angle);
-    np1.y = point.y + (p1.x-point.x)*sin(angle)-(p1.y-point.y)*cos(angle);
-
-    np2.x = point.x + (p2.x-point.x)*cos(angle)-(p2.y-point.y)*sin(angle);
-    np2.y = point.y + (p2.x-point.x)*sin(angle)-(p2.y-point.y)*cos(angle);
-
-    p1 = np1;
-    p2 = np2;
-
-    shape.clear();
-    draw();
-}
-*/
 
 /**
  * Funkcja skaluje linię.
@@ -524,6 +508,59 @@ void BrokenLine::draw(){
             }
     }
 }
+/**
+ * Funkcja przesuwa łamana o podany wektor.
+ * @param p Wektor przesunięcia.
+ */
+void BrokenLine::move(Point2D p){
+    for(int i=0;i<points.size();i++){
+        points[i].x += p.x;
+        points[i].y += p.y;
+    }
+    shape.clear();
+    draw();
+}
+
+/**
+ * Funckja obraca łamaną.
+ * @angle Kąt obrócenia w radianach.
+ * @point Punkt obracania.
+ */
+void BrokenLine::rotate(float angle,Point2D point){
+    for(int i=0;i<points.size();i++){
+        points[i].x = cos(angle)*(points[i].x-point.x)-sin(angle)*(points[i].y-point.y)+point.x;
+        points[i].y = sin(angle)*(points[i].x-point.x)+cos(angle)*(points[i].y-point.y)+point.y;
+    }
+    shape.clear();
+    draw();
+}
+/**
+ * Funckja obraca łamaną przez punkt 0,0.
+ * @angle Kąt obrócenia w radianach.
+ */
+void BrokenLine::rotate(float angle){
+    for(int i=0;i<points.size();i++){
+        points[i].x = (points[i].x * cos(angle)) - (points[i].y * sin(angle));
+        points[i].y = (points[i].x * sin(angle)) + (points[i].y * cos(angle));
+    }
+    shape.clear();
+    draw();
+}
+
+/**
+ * Funkcja skaluje łamaną.
+ * @scale Skala skalowania.
+ */
+void BrokenLine::scale(float scale){
+     for(int i=0;i<points.size();i++){
+        points[i].x = points[i].x*scale;
+        points[i].y = points[i].y*scale;
+    }
+     shape.clear();
+     draw();
+
+}
+
 
 /**
  * Konsturktor inicjalizuje koło o środku w punkcie p, oraz promieniu rad.
@@ -637,6 +674,27 @@ void Elipse::draw(){
         addPixel(Point2D(1,1),Point2D(origin.x+y,origin.y-x));
         addPixel(Point2D(1,1),Point2D(origin.x-y,origin.y-x));
         addPixel(Point2D(1,1),Point2D(origin.x-y,origin.y+x));
+    }
+}
+
+/**
+ * Wypełnia elipse.
+ */
+void Elipse::fill(Point2D p){
+    bool filled = false;
+    for(int i = 0;i<shape.size();i++){
+        sf::Vector2f v = shape[i]->getPosition();
+        if(v.x == p.x && v.y == p.y){
+            filled = true;
+            break;
+        }
+    }
+    if(!filled){
+        addPixel(Point2D(1,1),p);
+        Elipse::fill(Point2D(p.x+1,p.y));
+        Elipse::fill(Point2D(p.x-1,p.y));
+        Elipse::fill(Point2D(p.x,p.y+1));
+        Elipse::fill(Point2D(p.x,p.y-1));
     }
 }
 

@@ -31,6 +31,7 @@ int main(){
     c.r=r;c.g=g;c.b=b;
     std::vector<Point2D> points2 = {Point2D(200,0),Point2D(200,200),Point2D(250,300)};
     BrokenLine *bLineC = new BrokenLine(points2,false,c);
+    app.renderer.makeUpdateable("closed",bLineC);
     app.renderer.addBrokenLine(bLineC);
 
     r = std::rand()%256;g = std::rand()%256;b = std::rand()%256;

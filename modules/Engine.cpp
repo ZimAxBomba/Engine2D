@@ -70,6 +70,7 @@ void EngineWrapper::Update(double dt){
     mainWindow.draw(renderer.player.c.sprite);
     renderer.updateMap["kwadrat"]->rotate(10*dt);
     renderer.updateCustomMap["linia"]->rotate(10*dt,Point2D(300,400));
+    //renderer.updateCustomMap["closed"]->move(Point2D(1,1));
     //mainWindow.draw(renderer.player.p);
 }
 
