@@ -759,6 +759,81 @@ int j = i+1;
             }
     }
 }
+
+/**
+ * Funkcja przesuwa wielokąt o podany wektor.
+ * @param p Wektor przesunięcia.
+ */
+void Polygon::move(Point2D p){
+    for(int i=0;i<points.size();i++){
+        points[i].x += p.x;
+        points[i].y += p.y;
+    }
+    shape.clear();
+    draw();
+}
+
+/**
+ * Funckja obraca wielokąt.
+ * @angle Kąt obrócenia w radianach.
+ * @point Punkt obracania.
+ */
+void Polygon::rotate(float angle,Point2D point){
+    for(int i=0;i<points.size();i++){
+        points[i].x = cos(angle)*(points[i].x-point.x)-sin(angle)*(points[i].y-point.y)+point.x;
+        points[i].y = sin(angle)*(points[i].x-point.x)+cos(angle)*(points[i].y-point.y)+point.y;
+    }
+    shape.clear();
+    draw();
+}
+/**
+ * Funckja obraca wielokąt przez punkt 0,0.
+ * @angle Kąt obrócenia w radianach.
+ */
+void Polygon::rotate(float angle){
+    for(int i=0;i<points.size();i++){
+        points[i].x = (points[i].x * cos(angle)) - (points[i].y * sin(angle));
+        points[i].y = (points[i].x * sin(angle)) + (points[i].y * cos(angle));
+    }
+    shape.clear();
+    draw();
+}
+
+/**
+ * Funkcja skaluje łamaną.
+ * @scale Skala skalowania.
+ */
+void Polygon::scale(float scale){
+     for(int i=0;i<points.size();i++){
+        points[i].x = points[i].x*scale;
+        points[i].y = points[i].y*scale;
+    }
+     shape.clear();
+     draw();
+
+}
+
+/**
+ * Funkcja wypełnia polygon.
+ */
+void Polygon::fill(Point2D p){
+    bool filled = false;
+    for(int i = 0;i<shape.size();i++){
+        sf::Vector2f v = shape[i]->getPosition();
+        if(v.x == p.x && v.y == p.y){
+            filled = true;
+            break;
+        }
+    }
+    if(!filled){
+        addPixel(Point2D(1,1),p);
+        Polygon::fill(Point2D(p.x+1,p.y));
+        Polygon::fill(Point2D(p.x-1,p.y));
+        Polygon::fill(Point2D(p.x,p.y+1));
+        Polygon::fill(Point2D(p.x,p.y-1));
+    }
+}
+
 /**
  * Inicjializuje gracza z domyślnymi ustawieniami.
  */

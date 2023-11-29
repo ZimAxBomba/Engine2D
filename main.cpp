@@ -48,6 +48,7 @@ int main(){
     c.r=r;c.g=g;c.b=b;
     std::vector<Point2D> points3 = {Point2D(400,0),Point2D(400,100),Point2D(450,400),Point2D(300,200)};
     Polygon *polygon = new Polygon(points3,c);
+    //polygon->fill(Point2D(362,200));
     app.renderer.addCustomPolygon(polygon);
 
     app.renderer.addCirc(25,sf::Vector2f(0,300));

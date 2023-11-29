@@ -189,6 +189,7 @@ void EngineWrapper::HandleEvent(sf::Event event){
         case sf::Event::MouseButtonPressed:
             if(event.mouseButton.button == sf::Mouse::Left){
                 renderer.addCirc(20,sf::Vector2f(event.mouseButton.x,event.mouseButton.y));
+                std::cout << event.mouseButton.x << ":" << event.mouseButton.y << std::endl;
             }
             if(event.mouseButton.button == sf::Mouse::Right){
                 renderer.shapes.back()->move(10,10);

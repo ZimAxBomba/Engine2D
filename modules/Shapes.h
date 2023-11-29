@@ -160,12 +160,17 @@ class Elipse: virtual public CustomShape{
 /**
  * Klasa rysująca wielokąt.
  */
-class Polygon: virtual public CustomShape{
+class Polygon: virtual public CustomShape,virtual public TransformableShape{
     public:
         Polygon();
         Polygon(std::vector<Point2D>);
         Polygon(std::vector<Point2D>,sf::Color);
         void draw();
+        void fill(Point2D);
+        void move(Point2D);
+        void rotate(float);
+        void rotate(float,Point2D);
+        void scale(float);
 
         std::vector<Point2D> points;
         bool intersecting; /**< Pokazuje czy boki wielokątu przecinają się.*/
